@@ -81,8 +81,15 @@ public class InventorySetupItemSerializableTypeAdapter extends TypeAdapter<Inven
 						sc = InventorySetupsStackCompareID.valueOf(in.nextString());
 						break;
 					default:
+						// Handle any issues from legacy migrations without getting stuck in infinite loops
+						in.skipValue();
 						break;
 				}
+			}
+			else
+			{
+				// Defensive: ensure we always make progress even if we somehow end up on a value token.
+				in.skipValue();
 			}
 		}
 
@@ -90,3 +97,4 @@ public class InventorySetupItemSerializableTypeAdapter extends TypeAdapter<Inven
 		return new InventorySetupItemSerializable(id, q, f, sc);
 	}
 }
+
